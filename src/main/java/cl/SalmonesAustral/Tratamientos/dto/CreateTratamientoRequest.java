@@ -1,87 +1,51 @@
 package cl.SalmonesAustral.Tratamientos.dto;
 
+import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public class CreateTratamientoRequest {
+public record CreateTratamientoRequest (
 
+    @NotNull(message = "El ID de la jaula es obligatorio")
+    Integer jaulaId,
 
-    @NotBlank(message = "La jaula es obligatoria")
-    private Integer jaulaId;
+    @NotNull(message = "El ID de veterinario es obligatorio")
+    Integer veterinarioId,
 
-    private String enfermedad;
-    private String medicamento;
-    private String dosis;
+    @NotBlank(message = "La enfermedad no puede estar vacia")
+    String enfermedad,
 
-    @PositiveOrZero(message = "La duración no puede ser negativa")
-    private Integer duracionDias;
+    @NotBlank(message = "El nombre del medicamento es obligatorio")
+    String medicamento,
+
+    @NotBlank(message = "La dosis a usar, es obligatoria")
+    String dosis,
+
+    @NotNull(message = "La duracionen dias, es obligatoria")
+    @Positive(message = "La duracion debe ser un numero positivo")
+    Integer duracionDias,
+
+    @NotNull(message = "La cantidad de peces tratados es obligatoria")
+    @Positive(message = "La cantidad de peces debe ser un numero positivo")
+    Integer pecesTratados,
 
     @PositiveOrZero(message = "El periodo de resguardo no puede ser negativo")
-    private Integer periodoResguardo;
+    Integer periodoResguardo,
 
-    private String observaciones;
+    String loteMedicamento,
+    
+    @NotNull(message = "La fecha de inicio es obligatoria")
+    LocalDate fechaInicio,
 
-    public CreateTratamientoRequest() {
-    }
+    LocalDate fechaFin,
 
-    public Integer getJaulaId() {
-        return jaulaId;
-    }
+    @NotBlank(message = "El estado del tratamiento es obligatorio")
+    String estado,
 
-    public void setJaulaId(Integer jaulaId) {
-        this.jaulaId = jaulaId;
-    }
-
-    public String getEnfermedad() {
-        return enfermedad;
-    }
-
-    public void setEnfermedad(String enfermedad) {
-        this.enfermedad = enfermedad;
-    }
-
-    public String getMedicamento() {
-        return medicamento;
-    }
-
-    public void setMedicamento(String medicamento) {
-        this.medicamento = medicamento;
-    }
-
-    public String getDosis() {
-        return dosis;
-    }
-
-    public void setDosis(String dosis) {
-        this.dosis = dosis;
-    }
-
-    public Integer getDuracionDias() {
-        return duracionDias;
-    }
-
-    public void setDuracionDias(Integer duracionDias) {
-        this.duracionDias = duracionDias;
-    }
-
-    public Integer getPeriodoResguardo() {
-        return periodoResguardo;
-    }
-
-    public void setPeriodoResguardo(Integer periodoResguardo) {
-        this.periodoResguardo = periodoResguardo;
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-
-
+    String observacioness
+){
 
 
 

@@ -4,43 +4,77 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name="tabla_tratamiento")
 public class Tratamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
+    @Column(name = "jaula_id", nullable = false)
     private Integer jaulaId;
-    private String enfermedad;
-    private String medicamento;
-    private String dosis;
 
+    @Column(name = "veterinario_id", nullable = false)
+    private Integer veterinarioId;
+
+    @Column(name = "enfermedad", nullable = false )
+    private String enfermedad;
+
+    @Column(name = "medicamento", nullable = false)
+    private String medicamento;
+
+    @Column(name = "lote_medicamento")
+    private String loteMedicamento;
+
+    @Column(name = "dosis", nullable = false)
+    private String dosis; //se calcula por biomasa(peso total de peces a tratar)
+
+    @Column(name = "duracion_dias", nullable = false)
     private Integer duracionDias;
+
+    @Column(name = "peces_tratados", nullable = false)
+    private Integer pecesTratados;
+
+    @Column(name = "periodo_resguardo")
     private Integer periodoResguardo;
 
+    @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
+
+    @Column(name = "fecha_fin")
     private LocalDate fechaFin;
 
-    private String estado;
+    @Column(name = "estado", nullable = false)
+    private String estado; // en progreso, completado, suspendido
+
+    @Column(name = "observaciones", length = 500)
     private String observaciones;
 
-    public Tratamiento() {
-    }
 
-    public Long getId() {
+
+
+    public Tratamiento() {}
+
+    public Integer getId() {
         return id;
+    }
+    public void setId(Integer id) {
+        this.id=id;
     }
 
     public Integer getJaulaId() {
         return jaulaId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setJaulaId(Integer jaulaId) {
         this.jaulaId = jaulaId;
+    }
+
+    public Integer getVeterinarioId() {
+        return veterinarioId;
+    }
+    public void setVeterinarioId(Integer veterinarioId) {
+        this.veterinarioId=veterinarioId;
     }
 
     public String getEnfermedad() {
@@ -58,6 +92,12 @@ public class Tratamiento {
     public void setMedicamento(String medicamento) {
         this.medicamento = medicamento;
     }
+    public String getLoteMedicamento() {
+        return loteMedicamento;
+    }
+    public void setLoteMedicamento(String loteMedicamento) {
+        this.loteMedicamento=loteMedicamento;
+    }
 
     public String getDosis() {
         return dosis;
@@ -73,6 +113,12 @@ public class Tratamiento {
 
     public void setDuracionDias(Integer duracionDias) {
         this.duracionDias = duracionDias;
+    }
+    public Integer getPecesTratados() {
+        return pecesTratados;
+    }
+    public void setPecesTratados(Integer pecesTratados) {
+        this.pecesTratados = pecesTratados;
     }
 
     public Integer getPeriodoResguardo() {
