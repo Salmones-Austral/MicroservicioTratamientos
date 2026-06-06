@@ -23,7 +23,7 @@ public record CreateTratamientoRequest (
     @NotBlank(message = "La dosis a usar, es obligatoria")
     String dosis,
 
-    @NotNull(message = "La duracionen dias, es obligatoria")
+    @NotNull(message = "La duracion en dias, es obligatoria")
     @Positive(message = "La duracion debe ser un numero positivo")
     Integer duracionDias,
 
@@ -35,16 +35,14 @@ public record CreateTratamientoRequest (
     Integer periodoResguardo,
 
     String loteMedicamento,
-    
-    @NotNull(message = "La fecha de inicio es obligatoria")
+
     LocalDate fechaInicio,
 
     LocalDate fechaFin,
 
-    @NotBlank(message = "El estado del tratamiento es obligatorio")
     String estado,
 
-    String observacioness
+    String observaciones
 ){
 
 

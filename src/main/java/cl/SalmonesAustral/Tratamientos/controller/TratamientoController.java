@@ -1,7 +1,11 @@
 package cl.SalmonesAustral.Tratamientos.controller;
 
+import cl.SalmonesAustral.Tratamientos.dto.CreateTratamientoRequest;
 import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.service.TratamientoService;
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,31 +23,36 @@ public class TratamientoController {
 
     // Crear tratamiento
     @PostMapping
-    public ResponseEntity<Tratamiento> crear(@RequestBody Tratamiento tratamiento) {
-        return ResponseEntity.ok(service.crear(tratamiento));
+    public ResponseEntity<Tratamiento> create(@Valid @RequestBody CreateTratamientoRequest request) {
+        Tratamiento nuevoTratamiento=service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoTratamiento);
     }
 
     // Obtener todos
     @GetMapping
-    public ResponseEntity<List<Tratamiento>> obtenerTodos() {
-        return ResponseEntity.ok(service.obtenerTodos());
+    public ResponseEntity<List<Tratamiento>> getAll() {
+        List<Tratamiento> tratamientos=service.getAll();
+        return ResponseEntity.ok(tratamientos);
     }
 
     // Obtener por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Tratamiento> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.obtenerPorId(id));
+    public ResponseEntity<Tratamiento> getById(@PathVariable Integer id) {
+        Tratamiento tratamiento=service.getById(id);
+        return ResponseEntity.ok(tratamiento);
     }
 
     // Finalizar tratamiento
     @PutMapping("/{id}/finalizar")
-    public ResponseEntity<Tratamiento> finalizar(@PathVariable Long id) {
-        return ResponseEntity.ok(service.finalizar(id));
+    public ResponseEntity<Tratamiento> finalizar(@PathVariable Integer id) {
+        Tratamiento tratamientoFinalizado=service.finalizar(id);
+        return ResponseEntity.ok(tratamientoFinalizado);
     }
 
     // CLAVE: validar si una jaula está en resguardo
     @GetMapping("/resguardo/{jaulaId}")
     public ResponseEntity<Boolean> estaEnResguardo(@PathVariable Integer jaulaId) {
-        return ResponseEntity.ok(service.estaEnResguardo(jaulaId));
+        Boolean resguardo=service.estaEnResguardo(jaulaId);
+        return ResponseEntity.ok(resguardo);
     }
 }

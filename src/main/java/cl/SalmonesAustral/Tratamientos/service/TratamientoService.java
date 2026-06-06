@@ -1,10 +1,11 @@
 package cl.SalmonesAustral.Tratamientos.service;
 
 
+import cl.SalmonesAustral.Tratamientos.dto.CreateTratamientoRequest;
 import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.repository.TratamientosRepository;
 import org.springframework.stereotype.Service;
-
+import cl.SalmonesAustral.Tratamientos.mapper.TratamientoMapper;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,47 +19,41 @@ public class TratamientoService {
     }
 
     // Crear tratamiento
-    public Tratamiento crear(Tratamiento t) {
+    public Tratamiento create(CreateTratamientoRequest request) {
 
-        // Validación simple
-        if (t.getJaulaId() == null) {
-            throw new RuntimeException("La jaula es obligatoria");
-        }
 
         // Evitar más de un tratamiento activo por jaula
-        List<Tratamiento> activos = repository.findByJaulaIdAndEstado(t.getJaulaId(), "ACTIVO");
+        List<Tratamiento> activos = repository.findByJaulaIdAndEstado(request.jaulaId(), "ACTIVO");
         if (!activos.isEmpty()) {
             throw new RuntimeException("Ya existe un tratamiento activo para esta jaula");
         }
-
+        //mapeamos la entidad usando el mapper del record
+        Tratamiento t = TratamientoMapper.toModel(request);
         // Fecha inicio automática
         t.setFechaInicio(LocalDate.now());
-
-        // Calcular fecha fin
-        if (t.getDuracionDias() != null) {
-            t.setFechaFin(t.getFechaInicio().plusDays(t.getDuracionDias()));
-        }
-
-        // Estado inicial
         t.setEstado("ACTIVO");
+        t.setFechaFin(null);
 
-        return repository.save(t);
+     return repository.save(t);
     }
 
     //  Obtener todos
-    public List<Tratamiento> obtenerTodos() {
+    public List<Tratamiento> getAll() {
         return repository.findAll();
     }
 
     // Obtener por ID
-    public Tratamiento obtenerPorId(Long id) {
+    public Tratamiento getById(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tratamiento no encontrado"));
     }
 
     // Finalizar tratamiento
-    public Tratamiento finalizar(Long id) {
-        Tratamiento t = obtenerPorId(id);
+    public Tratamiento finalizar(Integer id) {
+        Tratamiento t = getById(id);
+        if (!"ACTIVO".equals(t.getEstado())) {
+            throw new RuntimeException("Solo se pueden finalizar tratamientos que estan ACTIVO");
+        }
 
         t.setEstado("FINALIZADO");
         t.setFechaFin(LocalDate.now());
@@ -77,9 +72,11 @@ public class TratamientoService {
 
         Tratamiento t = activos.get(0);
 
-        // Fecha fin + periodo de resguardo
-        LocalDate finResguardo = t.getFechaFin().plusDays(t.getPeriodoResguardo());
+        // Fecha fin + periodo de resguardo+duracion
+        int diasTotalesEspera = t.getDuracionDias() + (t.getPeriodoResguardo()!=null ? t.getPeriodoResguardo():0);
+        LocalDate finResguardo = t.getFechaInicio().plusDays(diasTotalesEspera);
 
         return LocalDate.now().isBefore(finResguardo);
     }
 }
+

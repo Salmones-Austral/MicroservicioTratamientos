@@ -4,7 +4,7 @@ import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-public interface TratamientosRepository extends JpaRepository<Tratamiento, Long> {
+public interface TratamientosRepository extends JpaRepository<Tratamiento, Integer> {
 
     // Buscar tratamientos por jaula
     List<Tratamiento> findByJaulaId(Integer jaulaId);

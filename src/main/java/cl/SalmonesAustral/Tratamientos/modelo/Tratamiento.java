@@ -55,6 +55,38 @@ public class Tratamiento {
 
     public Tratamiento() {}
 
+//constructor para createTR)
+    public Tratamiento(Integer id, Integer jaulaId, Integer veterinarioId, String enfermedad, String medicamento,
+        String dosis, Integer duracionDias, Integer pecesTratados, Integer periodoResguardo, String loteMedicamento,
+        LocalDate fechaInicio, LocalDate fechaFin, String estado, String observaciones) {
+            this.id=id;
+            this.jaulaId=jaulaId;
+            this.veterinarioId=veterinarioId;
+            this.enfermedad=enfermedad;
+            this.medicamento=medicamento;
+            this.dosis=dosis;
+            this.duracionDias=duracionDias;
+            this.pecesTratados=pecesTratados;
+            this.periodoResguardo=periodoResguardo;
+            this.loteMedicamento=loteMedicamento;
+            this.fechaInicio=fechaInicio;
+            this.fechaFin=fechaFin;
+            this.estado=estado;
+            this.observaciones=observaciones;
+        }
+//constructor para updateTR)
+    public Tratamiento(Integer id, String enfermedad, String medicamento, String dosis,
+            Integer duracionDias, Integer periodoResguardo, String observaciones) {
+                this.id=id;
+                this.enfermedad=enfermedad;
+                this.medicamento=medicamento;
+                this.dosis=dosis;
+                this.duracionDias=duracionDias;
+                this.periodoResguardo=periodoResguardo;
+                this.observaciones=observaciones;
+
+            }
+
     public Integer getId() {
         return id;
     }
