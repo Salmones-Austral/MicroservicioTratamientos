@@ -63,7 +63,6 @@ public class TratamientoService {
 
     //  CLAVE: saber si una jaula está en resguardo
     public boolean estaEnResguardo(Integer jaulaId) {
-
         List<Tratamiento> activos = repository.findByJaulaIdAndEstado(jaulaId, "ACTIVO");
 
         if (activos.isEmpty()) {

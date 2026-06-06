@@ -50,9 +50,6 @@ public class Tratamiento {
     @Column(name = "observaciones", length = 500)
     private String observaciones;
 
-
-
-
     public Tratamiento() {}
 
 //constructor para createTR)
@@ -84,7 +81,6 @@ public class Tratamiento {
                 this.duracionDias=duracionDias;
                 this.periodoResguardo=periodoResguardo;
                 this.observaciones=observaciones;
-
             }
 
     public Integer getId() {
