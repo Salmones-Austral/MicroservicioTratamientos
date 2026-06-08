@@ -4,19 +4,22 @@ package cl.SalmonesAustral.Tratamientos.service;
 import cl.SalmonesAustral.Tratamientos.dto.CreateTratamientoRequest;
 import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.repository.TratamientosRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import cl.SalmonesAustral.Tratamientos.mapper.TratamientoMapper;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class TratamientoService {
-
+    @Autowired
+    private WebClient.Builder webClientBuilder;
     private final TratamientosRepository repository;
     private final WebClient jaulaWebClient;
     private final WebClient cosechaWebClient;
+
+
 
     public TratamientoService(TratamientosRepository repository) {
         this.repository = repository;
