@@ -5,6 +5,8 @@ import cl.SalmonesAustral.Tratamientos.dto.CreateTratamientoRequest;
 import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.repository.TratamientosRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import cl.SalmonesAustral.Tratamientos.mapper.TratamientoMapper;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,13 +15,26 @@ import java.util.List;
 public class TratamientoService {
 
     private final TratamientosRepository repository;
+    private final WebClient jaulaWebClient;
+    private final WebClient cosechaWebClient;
 
     public TratamientoService(TratamientosRepository repository) {
         this.repository = repository;
+        this.jaulaWebClient=WebClient.create("http://localhost:8081");
+        this.cosechaWebClient=WebClient.create("http://localhost:8092");
     }
 
     // Crear tratamiento
     public Tratamiento create(CreateTratamientoRequest request) {
+        try{
+            jaulaWebClient.get()
+            .uri("/api/v1/jaulas/" + request.jaulaId())
+            .retrieve()
+            .bodyToMono(Object.class)
+            .block();
+        }catch(Exception e) {
+            throw new RuntimeException("La jaula especificada no existe en el sistema");
+        }
 
 
         // Evitar más de un tratamiento activo por jaula
@@ -34,7 +49,25 @@ public class TratamientoService {
         t.setEstado("ACTIVO");
         t.setFechaFin(null);
 
-     return repository.save(t);
+        Tratamiento tratamientoGuardado=repository.save(t);
+        //conexion a cosecha:bloquear si hay resguardo(put)
+
+        if(tratamientoGuardado.getPeriodoResguardo()!=null) {
+            if(tratamientoGuardado.getPeriodoResguardo()>0) {
+                try {
+                    cosechaWebClient.put()
+                        .uri("/api/v1/cosecha/bloquear/" + request.jaulaId())
+                        .retrieve()
+                        .bodyToMono(Void.class)
+                        .block();
+                }catch (Exception e) {
+                    //mensaje para que no falle si cosecha esta apagado
+                    System.out.println("ADVERTENCIA: No se pudo enviar orden de bloqueo a cosecha");
+                }
+            }
+        }
+
+        return tratamientoGuardado;
     }
 
     //  Obtener todos
