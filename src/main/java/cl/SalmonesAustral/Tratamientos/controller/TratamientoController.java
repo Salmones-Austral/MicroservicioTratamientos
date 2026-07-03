@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @Tag(name = "Tratamientos", description = "Operaciones relacionadas con el control de tratamientos")
-@RequestMapping("/api/v1/tratamiento")
+@RequestMapping("/api/tratamientos")
 public class TratamientoController {
 
     private final TratamientoService service;

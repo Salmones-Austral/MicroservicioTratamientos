@@ -6,8 +6,6 @@ import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.repository.TratamientosRepository;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -26,9 +24,9 @@ public class TratamientoService {
     public TratamientoService(TratamientosRepository repository,
         @Qualifier("jaulasWebClient") WebClient jaulaWebClient,
         @Qualifier("cosechaWebClient") WebClient cosechaWebClient) {
-        this.repository = repository;
-        this.jaulaWebClient=jaulaWebClient;
-        this.cosechaWebClient=cosechaWebClient;
+    this.repository = repository;
+    this.jaulaWebClient=jaulaWebClient;
+    this.cosechaWebClient=cosechaWebClient;
 
         }
 
