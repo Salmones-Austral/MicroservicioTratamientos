@@ -17,7 +17,7 @@ public class WebClientConfig {
     private String jaulasUrl;
 
     @Bean("jaulasWebClient")
-    public WebClient jaulasWebClient() {
+    public WebClient jaulasWebClient(WebClient.Builder webClientBuilder) {
         return WebClient.builder()
             .baseUrl(jaulasUrl)
             .build();
@@ -28,7 +28,7 @@ public class WebClientConfig {
     private String cosechaUrl;
 
     @Bean("cosechaWebClient")
-    public WebClient cosechaWebClient() {
+    public WebClient cosechaWebClient(WebClient.Builder webClientBuilder) {
         return WebClient.builder()
             .baseUrl(cosechaUrl)
             .build();
