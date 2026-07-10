@@ -88,4 +88,10 @@ public class TratamientoController {
         Boolean resguardo=service.estaEnResguardo(jaulaId);
         return ResponseEntity.ok(resguardo);
     }
+
+    @DeleteMapping("/{id}")
+        public ResponseEntity<Void> eliminarTratamiento(@PathVariable Long id) {
+        service.eliminarPorId(id); 
+        return ResponseEntity.noContent().build(); 
+}
 }

@@ -159,5 +159,14 @@ public class TratamientoService {
 
         return LocalDate.now().isBefore(finResguardo);
     }
+    public void eliminarPorId(Long id) {
+        Integer idInteger=id.intValue();
+    // Validar si existe antes de borrar para evitar errores 
+        if (!repository.existsById(idInteger)) {
+            throw new RuntimeException("El tratamiento con ID " + id + " no existe.");
+    }
+    repository.deleteById(idInteger);
+    System.out.println("Tratamiento con ID " + id + " eliminado de la base de datos.");
+}
 }
 
