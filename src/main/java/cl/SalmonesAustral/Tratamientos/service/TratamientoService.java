@@ -2,18 +2,21 @@ package cl.SalmonesAustral.Tratamientos.service;
 
 
 import cl.SalmonesAustral.Tratamientos.dto.CreateTratamientoRequest;
+import cl.SalmonesAustral.Tratamientos.dto.JaulaEstadoUpdate;
 import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.repository.TratamientosRepository;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 import cl.SalmonesAustral.Tratamientos.mapper.TratamientoMapper;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Validated
 public class TratamientoService {
     
     private final TratamientosRepository repository;
@@ -24,9 +27,9 @@ public class TratamientoService {
     public TratamientoService(TratamientosRepository repository,
         @Qualifier("jaulasWebClient") WebClient jaulaWebClient,
         @Qualifier("cosechaWebClient") WebClient cosechaWebClient) {
-    this.repository = repository;
-    this.jaulaWebClient=jaulaWebClient;
-    this.cosechaWebClient=cosechaWebClient;
+        this.repository = repository;
+        this.jaulaWebClient=jaulaWebClient;
+        this.cosechaWebClient=cosechaWebClient;
 
         }
 
@@ -42,6 +45,25 @@ public class TratamientoService {
             System.out.println("Validacion de jaula exitosa.");
         }catch(Exception e) {
             throw new RuntimeException("La jaula especificada no existe en el sistema");
+        }
+        //Nuevo requerimiento: si se detecta "SRS", enviar orden para desactivar la jaula en su ms
+        if ("SRS".equalsIgnoreCase(request.enfermedad())) {
+            try {
+                JaulaEstadoUpdate jaulaUpdate = new JaulaEstadoUpdate(
+                    request.jaulaId().longValue(),
+                    false //aqui se cambia el estado "activa" de jaula a FALSE
+                );
+
+                jaulaWebClient.put()
+                .uri("/" + request.jaulaId())
+                .bodyValue(jaulaUpdate)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+                System.out.println("se envió la actualizacion de estado al ms de Jaulas");
+            }catch (Exception e) {
+                System.out.println("ADVERTENCIA: No se pudo actualizar el estado en el ms de Jaula: " + e.getMessage());
+            }
         }
 
 
