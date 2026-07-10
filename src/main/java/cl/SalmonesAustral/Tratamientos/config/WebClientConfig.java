@@ -13,13 +13,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
     //ms de jaula
-    @Value("${jaulas.service.url}")
-    private String jaulasUrl;
+   // @Value("${jaulas.service.url}")
+    //private String jaulasUrl;
 
     @Bean("jaulasWebClient")
-    public WebClient jaulasWebClient(WebClient.Builder webClientBuilder) {
+    public WebClient jaulasWebClient() {
         return WebClient.builder()
-            .baseUrl(jaulasUrl)
+            .baseUrl("https://microserviciojaulas.onrender.com/api/v1/jaulas")
             .build();
     }
 
