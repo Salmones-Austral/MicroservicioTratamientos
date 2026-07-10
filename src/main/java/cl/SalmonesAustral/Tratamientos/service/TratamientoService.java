@@ -2,18 +2,23 @@ package cl.SalmonesAustral.Tratamientos.service;
 
 
 import cl.SalmonesAustral.Tratamientos.dto.CreateTratamientoRequest;
-import cl.SalmonesAustral.Tratamientos.dto.JaulaEstadoUpdate;
+//import cl.SalmonesAustral.Tratamientos.dto.JaulaEstadoUpdate;
 import cl.SalmonesAustral.Tratamientos.modelo.Tratamiento;
 import cl.SalmonesAustral.Tratamientos.repository.TratamientosRepository;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
+
+//import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 import cl.SalmonesAustral.Tratamientos.mapper.TratamientoMapper;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 @Service
 @Validated
@@ -35,32 +40,45 @@ public class TratamientoService {
 
     // Crear tratamiento
     public Tratamiento create(@Valid @RequestBody CreateTratamientoRequest request) {
+        Map<?, ?> jaulaReal = null;
         try{
-            jaulaWebClient.get()
-            .uri("/v1/jaulas/" + request.jaulaId())
+            jaulaReal=jaulaWebClient.get()
+            .uri("/" + request.jaulaId())
             .retrieve()
-            .bodyToMono(Object.class)
+            .bodyToMono(Map.class)
             .block();
 
-            System.out.println("Validacion de jaula exitosa.");
+            System.out.println("Validacion de jaula exitosa." + jaulaReal);
         }catch(Exception e) {
-            throw new RuntimeException("La jaula especificada no existe en el sistema");
+            throw new RuntimeException("La jaula especificada no existe en el sistema " + e.getMessage());
         }
+            
+        //System.out.println("Validando jaula de forma simulada para el ID: " + request.jaulaId());
         //Nuevo requerimiento: si se detecta "SRS", enviar orden para desactivar la jaula en su ms
         if ("SRS".equalsIgnoreCase(request.enfermedad())) {
             try {
-                JaulaEstadoUpdate jaulaUpdate = new JaulaEstadoUpdate(
+                Map<String, Object> jaulaUpdate = new HashMap<>();
+                //valores reales que ya existen en su base de datos
+                jaulaUpdate.put("codigo", String.valueOf(jaulaReal.get("codigo"))); 
+                jaulaUpdate.put("capacidadMaxima", (Integer)jaulaReal.get("capacidadMaxima"));
+                jaulaUpdate.put("cantidadActual", (Integer)jaulaReal.get("cantidadActual"));
+                jaulaUpdate.put("criaderoId", ((Number)jaulaReal.get("criaderoId")).longValue());
+
+                jaulaUpdate.put("activa", false);                        // Apaga la jaula
+                jaulaUpdate.put("habilitarAlimentacion", (Boolean) false);         // Corta la alimentación por seguridad, ya venia notnull de ms jaula
+
+                /*JaulaEstadoUpdate jaulaUpdate = new JaulaEstadoUpdate(
                     request.jaulaId().longValue(),
                     false //aqui se cambia el estado "activa" de jaula a FALSE
                 );
-
+                */
                 jaulaWebClient.put()
-                .uri("/v1/jaulas/" + request.jaulaId())
+                .uri("/" + request.jaulaId())
                 .bodyValue(jaulaUpdate)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
-                System.out.println("se envió la actualizacion de estado al ms de Jaulas");
+                System.out.println("¡Estado de jaula actualizado con éxito!");
             }catch (Exception e) {
                 System.out.println("ADVERTENCIA: No se pudo actualizar el estado en el ms de Jaula: " + e.getMessage());
             }
