@@ -24,13 +24,13 @@ public class WebClientConfig {
     }
 
     //ms de cosecha
-    @Value("${cosecha.service.url}")
-    private String cosechaUrl;
+    //@Value("${cosecha.service.url}")
+    //private String cosechaUrl;
 
     @Bean("cosechaWebClient")
-    public WebClient cosechaWebClient(WebClient.Builder webClientBuilder) {
+    public WebClient cosechaWebClient() {
         return WebClient.builder()
-            .baseUrl(cosechaUrl)
+            .baseUrl("https://microserviciocosecha.onrender.com/api/v1/cosecha")
             .build();
     }
 }
