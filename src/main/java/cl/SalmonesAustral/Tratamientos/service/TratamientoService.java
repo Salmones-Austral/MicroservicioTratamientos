@@ -37,7 +37,7 @@ public class TratamientoService {
     public Tratamiento create(@Valid @RequestBody CreateTratamientoRequest request) {
         try{
             jaulaWebClient.get()
-            .uri("/" + request.jaulaId())
+            .uri("/v1/jaulas/" + request.jaulaId())
             .retrieve()
             .bodyToMono(Object.class)
             .block();
@@ -55,7 +55,7 @@ public class TratamientoService {
                 );
 
                 jaulaWebClient.put()
-                .uri("/" + request.jaulaId())
+                .uri("/v1/jaulas/" + request.jaulaId())
                 .bodyValue(jaulaUpdate)
                 .retrieve()
                 .bodyToMono(Void.class)
