@@ -52,6 +52,7 @@ public class TratamientoService {
         }catch(Exception e) {
             throw new RuntimeException("La jaula especificada no existe en el sistema " + e.getMessage());
         }
+
             
         //System.out.println("Validando jaula de forma simulada para el ID: " + request.jaulaId());
         //Nuevo requerimiento: si se detecta "SRS", enviar orden para desactivar la jaula en su ms
@@ -119,6 +120,56 @@ public class TratamientoService {
         return tratamientoGuardado;
     }
 
+    // Finalizar tratamiento
+
+    public Tratamiento finalizar(Integer id) {
+        Tratamiento t = getById(id);
+        if (!"ACTIVO".equals(t.getEstado())) {
+            throw new RuntimeException("Solo se pueden finalizar tratamientos que estan ACTIVO");
+        }
+
+        if ("SRS".equalsIgnoreCase(t.getEnfermedad())) {
+            Map<?, ?> jaulaReal = null;
+            try {
+                jaulaReal = jaulaWebClient.get()
+                .uri("/" + t.getJaulaId())
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+                System.out.println("¡Validacion de jaula exitosa! se reactivará");
+
+                if (jaulaReal !=null) {
+                    Map<String, Object> jaulaUpdate = new HashMap<>();
+                    jaulaUpdate.put("codigo", String.valueOf(jaulaReal.get("codigo")));
+                    jaulaUpdate.put("capacidadMaxima", (Integer) jaulaReal.get("capacidadMaxima" ));
+                    jaulaUpdate.put("cantidadActual", (Integer)jaulaReal.get("cantidadActual"));
+                    jaulaUpdate.put("criaderoId", ((Number)jaulaReal.get("criaderoId")).longValue());
+
+                    //REACTIVACION
+                    jaulaUpdate.put("activa", true);
+                    jaulaUpdate.put("HabilitarAlimentacion", (Boolean) true);
+
+                    jaulaWebClient.put()
+                    .uri("/" + t.getJaulaId())
+                    .bodyValue(jaulaUpdate)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+
+                    System.out.println("¡Estado de jaula: Reactivado !");   
+                }
+            }catch (Exception e) {
+                System.out.println("ERROR: No se pudo reactivar el estado de esa jaula" + e.getMessage());
+            }
+        }
+
+        t.setEstado("FINALIZADO");
+        t.setFechaFin(LocalDate.now());
+
+        return repository.save(t);
+
+    }
+
     //  Obtener todos
     public List<Tratamiento> getAll() {
         return repository.findAll();
@@ -130,18 +181,11 @@ public class TratamientoService {
                 .orElseThrow(() -> new RuntimeException("Tratamiento no encontrado"));
     }
 
-    // Finalizar tratamiento
-    public Tratamiento finalizar(Integer id) {
-        Tratamiento t = getById(id);
-        if (!"ACTIVO".equals(t.getEstado())) {
-            throw new RuntimeException("Solo se pueden finalizar tratamientos que estan ACTIVO");
-        }
+   
 
-        t.setEstado("FINALIZADO");
-        t.setFechaFin(LocalDate.now());
+        
 
-        return repository.save(t);
-    }
+      
 
     //  CLAVE: saber si una jaula está en resguardo
     public boolean estaEnResguardo(Integer jaulaId) {
