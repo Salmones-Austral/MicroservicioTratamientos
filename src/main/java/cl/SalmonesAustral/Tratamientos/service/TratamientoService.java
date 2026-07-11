@@ -147,7 +147,7 @@ public class TratamientoService {
 
                     //REACTIVACION
                     jaulaUpdate.put("activa", true);
-                    jaulaUpdate.put("HabilitarAlimentacion", (Boolean) true);
+                    jaulaUpdate.put("habilitarAlimentacion", (Boolean) true);
 
                     jaulaWebClient.put()
                     .uri("/" + t.getJaulaId())
