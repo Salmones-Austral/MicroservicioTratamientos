@@ -158,13 +158,8 @@ public class TratamientoService {
 
                     System.out.println("¡Estado de jaula: Reactivado !");   
                 }
-            }catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {    //es solo de prueba
-                 // Esto imprimirá en tus Logs de Render el código de error exacto (Ej: 400 o 500) y la razón
-                System.out.println("ERROR CRÍTICO HTTP DESDE MS JAULAS: " + e.getStatusCode());         //es solo de prueba
-                System.out.println("RESPUESTA DETALLADA DEL ERROR: " + e.getResponseBodyAsString());    //es solo de prueba
-            } catch (Exception e) {                                                                     //es solo de prueba
-                System.out.println("ADVERTENCIA: Error general de comunicación: " + e.getMessage());    //es solo de prueba
-}
+            }catch (Exception e) {
+                System.out.println("ERROR: No se pudo conectar con el ms de Jaula: " + e.getMessage()); }
             
         }
 
