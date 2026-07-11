@@ -143,7 +143,7 @@ public class TratamientoService {
                     jaulaUpdate.put("codigo", String.valueOf(jaulaReal.get("codigo")));
                     jaulaUpdate.put("capacidadMaxima", (Integer) jaulaReal.get("capacidadMaxima" ));
                     jaulaUpdate.put("cantidadActual", (Integer)jaulaReal.get("cantidadActual"));
-                    jaulaUpdate.put("criaderoId", ((Number)jaulaReal.get("criaderoId")).longValue());
+                    jaulaUpdate.put("criaderoId", (Integer)jaulaReal.get("criaderoId"));
 
                     //REACTIVACION
                     jaulaUpdate.put("activa", true);
@@ -158,9 +158,14 @@ public class TratamientoService {
 
                     System.out.println("¡Estado de jaula: Reactivado !");   
                 }
-            }catch (Exception e) {
-                System.out.println("ERROR: No se pudo reactivar el estado de esa jaula" + e.getMessage());
-            }
+            }catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {    //es solo de prueba
+                 // Esto imprimirá en tus Logs de Render el código de error exacto (Ej: 400 o 500) y la razón
+                System.out.println("ERROR CRÍTICO HTTP DESDE MS JAULAS: " + e.getStatusCode());         //es solo de prueba
+                System.out.println("RESPUESTA DETALLADA DEL ERROR: " + e.getResponseBodyAsString());    //es solo de prueba
+            } catch (Exception e) {                                                                     //es solo de prueba
+                System.out.println("ADVERTENCIA: Error general de comunicación: " + e.getMessage());    //es solo de prueba
+}
+            
         }
 
         t.setEstado("FINALIZADO");
